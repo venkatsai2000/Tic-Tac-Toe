@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 5px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: #fff;
+            border: 1px solid #000;
+            font-size: 32px;
+            text-align: center;
+            line-height: 100px;
+            cursor: pointer;
+        }
+        .winner {
+            margin-top: 20px;
+            font-size: 24px;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="gameBoard">
+    <!-- 9 cells for the game -->
+    <div class="cell" data-cell="1"></div>
+    <div class="cell" data-cell="2"></div>
+    <div class="cell" data-cell="3"></div>
+    <div class="cell" data-cell="4"></div>
+    <div class="cell" data-cell="5"></div>
+    <div class="cell" data-cell="6"></div>
+    <div class="cell" data-cell="7"></div>
+    <div class="cell" data-cell="8"></div>
+    <div class="cell" data-cell="9"></div>
+</div>
+<div class="winner" id="winner"></div>
+
+<script>
+    const gameBoard = document.getElementById('gameBoard');
+    const cells = document.querySelectorAll('.cell');
+    const winnerDisplay = document.getElementById('winner');
+    let currentPlayer = 'X';
+    let gameState = ["", "", "", "", "", "", "", "", ""];
+    let isGameActive = true;
+    const winPatterns = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+    ];
+
+    function checkWin() {
+        for (let pattern of winPatterns) {
+            const [a, b, c] = pattern;
+            if (gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
+                return gameState[a];
+            }
+        }
+        return gameState.includes("") ? null : "Draw";
+    }
+
+    function handleClick(event) {
+        const index = event.target.getAttribute('data-cell') - 1;
+        
+        // If cell already filled or game is over, return
+        if (gameState[index] || !isGameActive) return;
+
+        gameState[index] = currentPlayer;
+        event.target.textContent = currentPlayer;
+
+        const result = checkWin();
+        if (result) {
+            isGameActive = false;
+            if (result === "Draw") {
+                winnerDisplay.textContent = "It's a Draw!";
+            } else {
+                winnerDisplay.textContent = `${result} wins!`;
+            }
+        } else {
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        }
+    }
+
+    cells.forEach(cell => {
+        cell.addEventListener('click', handleClick);
+    });
+</script>
+
+</body>
+</html>
